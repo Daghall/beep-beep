@@ -1,3 +1,4 @@
+import EXAMPLE_NOTES from "./example-notes.js";
 import Oscillator from "./oscillator.js";
 import Matrix from "./matrix.js";
 
@@ -31,12 +32,27 @@ randomizeButton.addEventListener("click", async () => {
   m.randomize();
 });
 
+const exampleButton = document.getElementById("example");
+exampleButton.addEventListener("click", async () => {
+  m.load(EXAMPLE_NOTES);
+});
+
+const saveButton = document.getElementById("save");
+saveButton.addEventListener("click", async () => {
+  const data = m.save();
+  prompt("JSON", data); // eslint-disable-line no-alert
+});
+
+const loadButton = document.getElementById("load");
+loadButton.addEventListener("click", async () => {
+  const data = prompt("Enter JSON"); // eslint-disable-line no-alert
+  m.load(data);
+});
+
 function playNotes(notes) {
   if (!Array.isArray(notes)) throw `Notes is not an array: ${notes}`;
-  // console.log("XXX notes", notes); // eslint-disable-line no-console
 
   notes.forEach((note) => {
     oscillator.playNote(FREQ[note.note], duration / 1000, note.type);
   });
-
 }

@@ -16,14 +16,14 @@ export default class Matrix {
     };
     this._matrix = document.getElementById("matrix");
 
-    this._createCols(rows, cols);
+    this._createCols();
     this._setupEvents();
   }
 
   getNotes(index = 0) {
     if (index >= this._columns.length) return [];
 
-    return this._columns[index].filter((i) => i !== undefined);
+    return this._columns[index].filter((i) => !!i);
   }
 
   _setActive() {
@@ -68,24 +68,28 @@ export default class Matrix {
     const col = target.parentElement.dataset.col;
     const row = target.dataset.row;
 
-    this._columns[col][row] = !enabled ? undefined : {
+    this._columns[col][row] = !enabled ? null : {
       note: this._maxNote - row,
       type: target.dataset.type,
     };
   }
 
-  _createCols(rows, cols) {
+  _createCols() {
+    const {cols, rows} = this._numbers;
+
     for (let i = 0; i < cols; ++i) {
-      this._columns.push(Array(rows).fill(undefined));
+      this._columns.push(Array(rows).fill(null));
       const col = document.createElement("span");
       col.className = "matrix__column";
       col.dataset.col = i;
-      this._createRows(rows, col);
+      this._createRows(col);
       this._matrix.appendChild(col);
     }
   }
 
-  _createRows(rows, col) {
+  _createRows(col) {
+    const {rows} = this._numbers;
+
     for (let i = 0; i < rows; ++i) {
       const row = document.createElement("span");
       row.className = "matrix__row";
@@ -113,6 +117,46 @@ export default class Matrix {
         return "◿";
       case "triangle":
         return "△";
+    }
+  }
+
+  save() {
+    const data = {
+      rows: this._numbers.rows,
+      cols: this._numbers.cols,
+      notes: this._columns.map((_, i) => {
+        return this.getNotes(i);
+      }),
+    };
+    return JSON.stringify(data);
+  }
+
+  load(json) {
+    try {
+      const data = JSON.parse(json);
+      this._numbers.cols = data.cols;
+      this._numbers.rows = data.rows;
+      this._maxNote = this._numbers.rows - 1;
+
+      this._columns.length = 0;
+      while (this._matrix.firstChild) {
+        this._matrix.removeChild(this._matrix.firstChild);
+      }
+      this._createCols();
+
+      data.notes.forEach((rows, col) => {
+        rows.forEach((item) => {
+          const row = this._maxNote - item.note;
+          this._columns[col][row] = item;
+          const colElement = this._matrix.getElementsByClassName("matrix__column")[col];
+          const rowElement = colElement.getElementsByClassName("matrix__row")[row];
+          rowElement.dataset.type = item.type;
+          rowElement.textContent = this._oscillatorTypeToSymbol(rowElement.dataset.type);
+          rowElement.classList.add("enabled");
+        });
+      });
+    } catch (e) {
+      alert("Invalid save data"); // eslint-disable-line no-alert
     }
   }
 
