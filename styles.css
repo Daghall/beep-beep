@@ -3,6 +3,13 @@ h1 {
   font-family: sans-serif;
 }
 
+[data-type="sine"]::before {
+  content: "~";
+  position: absolute;
+  top: 0px;
+  left: 12px;
+}
+
 [data-type="square"]::before {
   content: "◻";
   position: absolute;
@@ -25,9 +32,14 @@ h1 {
   font-size: 0.9em;
 }
 
-#matrix {
+#matrix,
+#oscillator-type {
   display: flex;
   user-select: none;
+}
+
+#oscillator-type {
+  margin: 5px 0 0 3px;
 }
 
 .matrix__column {
@@ -38,15 +50,32 @@ h1 {
   border: 1px solid transparent;
 }
 
-.matrix__row {
+.matrix__row,
+.oscillator-type__button {
   width: 30px;
   height: 20px;
   border: 1px solid goldenrod;
-  border-radius: 3px;
   margin: 2px 0;
   text-align: center;
   color: chocolate;
   position: relative;
+  cursor: pointer;
+}
+
+.matrix__row {
+  border-radius: 3px;
+}
+
+.oscillator-type__button {
+  border-left-width: 0;
+}
+
+.oscillator-type__button:first-child {
+  border-left-width: 1px;
+  border-radius: 3px 0 0 3px;
+}
+.oscillator-type__button:last-child {
+  border-radius: 0 3px 3px 0;
 }
 
 .enabled {

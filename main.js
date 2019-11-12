@@ -49,6 +49,21 @@ loadButton.addEventListener("click", async () => {
   m.load(data);
 });
 
+const oscillatorType = document.getElementById("oscillator-type");
+oscillatorType.addEventListener("click", (evt) => {
+  const type = evt.target.dataset.type;
+  const target = evt.target;
+
+  if (type) {
+    const enabled = oscillatorType.getElementsByClassName("enabled")[0];
+    if (enabled) {
+      enabled.classList.remove("enabled");
+    }
+    target.classList.add("enabled");
+    m.setDefaultOscillatorType(type);
+  }
+});
+
 function playNotes(notes) {
   if (!Array.isArray(notes)) throw `Notes is not an array: ${notes}`;
 

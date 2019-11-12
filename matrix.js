@@ -8,6 +8,7 @@ const OSCILATOR_TYPES = [
 export default class Matrix {
   constructor(rows, cols) {
     this._columns = [];
+    this._defaultOscillatorType = "sine";
     this._maxNote = rows - 1;
     this._currentCol = -1;
     this._numbers = {
@@ -56,10 +57,11 @@ export default class Matrix {
     });
   }
 
-  _toggleCell(target) {
+  _toggleCell(target, type) {
     const enabled = target.classList.toggle("enabled");
-    if (!enabled) {
-      target.textContent = "";
+    if (enabled) {
+      target.dataset.type = type || this._defaultOscillatorType;
+    } else {
       target.dataset.type = "";
     }
     this._updateModel(target, enabled);
@@ -148,6 +150,10 @@ export default class Matrix {
     }
   }
 
+  setDefaultOscillatorType(type) {
+    this._defaultOscillatorType = type;
+  }
+
   randomize() {
     const cellsToEnable = Math.random() * 20 + 10;
     for (let i = 0; i < cellsToEnable; ++i) {
@@ -156,9 +162,9 @@ export default class Matrix {
       const colElement = this._matrix.getElementsByClassName("matrix__column")[col];
       const rowElement = colElement.getElementsByClassName("matrix__row")[row];
       const freqType = Math.floor(Math.random() * OSCILATOR_TYPES.length);
-      rowElement.dataset.type = OSCILATOR_TYPES[freqType];
+      const type = OSCILATOR_TYPES[freqType];
 
-      this._toggleCell(rowElement);
+      this._toggleCell(rowElement, type);
     }
   }
 }
