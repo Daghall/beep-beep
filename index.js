@@ -32,11 +32,11 @@ randomizeButton.addEventListener("click", async () => {
 });
 
 function playNotes(notes) {
-  if (!Array.isArray(notes)) return;//throw `Notes is not an array: ${notes}`;
-  // const notes = m.getNotes(0);
-  console.log("XXX notes", notes); // eslint-disable-line no-console
+  if (!Array.isArray(notes)) throw `Notes is not an array: ${notes}`;
+  // console.log("XXX notes", notes); // eslint-disable-line no-console
+
   notes.forEach((note) => {
-    oscillator.playNote(FREQ[note], duration / 1000);
+    oscillator.playNote(FREQ[note.note], duration / 1000, note.type);
   });
 
 }

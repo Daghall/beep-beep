@@ -1,3 +1,10 @@
+const OSCILATOR_TYPES = [
+  "sine",
+  "square",
+  "sawtooth",
+  "triangle",
+];
+
 export default class Matrix {
   constructor(rows, cols) {
     this._columns = [];
@@ -16,9 +23,7 @@ export default class Matrix {
   getNotes(index = 0) {
     if (index >= this._columns.length) return [];
 
-    return this._columns[index].map((value, i) => {
-      return value ? (this._maxNote - i) : false;
-    }).filter((i) => i !== false);
+    return this._columns[index].filter((i) => i !== undefined);
   }
 
   _setActive() {
@@ -41,21 +46,37 @@ export default class Matrix {
       const target = evt.target;
 
       if (target.dataset.grid !== undefined) {
-        this._toggleCell(target);
+        if (evt.shiftKey) {
+          this._cycleType(target);
+          target.classList.add("enabled");
+        } else {
+          this._toggleCell(target);
+        }
       }
     });
   }
 
   _toggleCell(target) {
+    const enabled = target.classList.toggle("enabled");
+    if (!enabled) {
+      target.textContent = "";
+    }
+    this._updateModel(target, enabled);
+  }
+
+  _updateModel(target, enabled) {
     const col = target.parentElement.dataset.col;
     const row = target.dataset.row;
-    this._columns[col][row] = this._columns[col][row] ? undefined : true;
-    target.classList.toggle("enabled");
+
+    this._columns[col][row] = !enabled ? undefined : {
+      note: this._maxNote - row,
+      type: target.dataset.type,
+    };
   }
 
   _createCols(rows, cols) {
     for (let i = 0; i < cols; ++i) {
-      this._columns.push(Array(rows).fill(false));
+      this._columns.push(Array(rows).fill(undefined));
       const col = document.createElement("span");
       col.className = "matrix__column";
       col.dataset.col = i;
@@ -74,6 +95,27 @@ export default class Matrix {
     }
   }
 
+  _cycleType(target) {
+    const type = target.dataset.type || "sine";
+    const nextTypeIndex = (OSCILATOR_TYPES.indexOf(type) + 1) % OSCILATOR_TYPES.length;
+    const nextType = OSCILATOR_TYPES[nextTypeIndex];
+    target.dataset.type = nextType;
+    target.textContent = this._oscillatorTypeToSymbol(nextType);
+
+    this._updateModel(target, true);
+  }
+
+  _oscillatorTypeToSymbol(type) {
+    switch (type) {
+      case "square":
+        return "◻";
+      case "sawtooth":
+        return "◿";
+      case "triangle":
+        return "△";
+    }
+  }
+
   randomize() {
     const cellsToEnable = Math.random() * 20 + 10;
     for (let i = 0; i < cellsToEnable; ++i) {
@@ -81,6 +123,9 @@ export default class Matrix {
       const row = Math.floor(Math.random() * this._numbers.rows);
       const colElement = this._matrix.getElementsByClassName("matrix__column")[col];
       const rowElement = colElement.getElementsByClassName("matrix__row")[row];
+      const freqType = Math.floor(Math.random() * OSCILATOR_TYPES.length);
+      rowElement.dataset.type = OSCILATOR_TYPES[freqType];
+      rowElement.textContent = this._oscillatorTypeToSymbol(rowElement.dataset.type);
 
       this._toggleCell(rowElement);
     }
