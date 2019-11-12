@@ -60,6 +60,7 @@ export default class Matrix {
     const enabled = target.classList.toggle("enabled");
     if (!enabled) {
       target.textContent = "";
+      target.dataset.type = "";
     }
     this._updateModel(target, enabled);
   }
