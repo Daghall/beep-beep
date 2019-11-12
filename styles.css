@@ -3,6 +3,28 @@ h1 {
   font-family: sans-serif;
 }
 
+[data-type="square"]::before {
+  content: "◻";
+  position: absolute;
+  top: -1px;
+  left: 7px;
+}
+
+[data-type="sawtooth"]::before {
+  content: "◿";
+  position: absolute;
+  top: -1px;
+  left: 10px;
+}
+
+[data-type="triangle"]::before {
+  content: "△";
+  position: absolute;
+  top: -1px;
+  left: 8px;
+  font-size: 0.9em;
+}
+
 #matrix {
   display: flex;
   user-select: none;
@@ -24,6 +46,7 @@ h1 {
   margin: 2px 0;
   text-align: center;
   color: chocolate;
+  position: relative;
 }
 
 .enabled {

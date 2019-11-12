@@ -105,20 +105,8 @@ export default class Matrix {
     const nextTypeIndex = (OSCILATOR_TYPES.indexOf(type) + 1) % OSCILATOR_TYPES.length;
     const nextType = OSCILATOR_TYPES[nextTypeIndex];
     target.dataset.type = nextType;
-    target.textContent = this._oscillatorTypeToSymbol(nextType);
 
     this._updateModel(target, true);
-  }
-
-  _oscillatorTypeToSymbol(type) {
-    switch (type) {
-      case "square":
-        return "◻";
-      case "sawtooth":
-        return "◿";
-      case "triangle":
-        return "△";
-    }
   }
 
   save() {
@@ -152,7 +140,6 @@ export default class Matrix {
           const colElement = this._matrix.getElementsByClassName("matrix__column")[col];
           const rowElement = colElement.getElementsByClassName("matrix__row")[row];
           rowElement.dataset.type = item.type;
-          rowElement.textContent = this._oscillatorTypeToSymbol(rowElement.dataset.type);
           rowElement.classList.add("enabled");
         });
       });
@@ -170,7 +157,6 @@ export default class Matrix {
       const rowElement = colElement.getElementsByClassName("matrix__row")[row];
       const freqType = Math.floor(Math.random() * OSCILATOR_TYPES.length);
       rowElement.dataset.type = OSCILATOR_TYPES[freqType];
-      rowElement.textContent = this._oscillatorTypeToSymbol(rowElement.dataset.type);
 
       this._toggleCell(rowElement);
     }
